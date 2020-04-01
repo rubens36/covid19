@@ -159,7 +159,8 @@ def generate_regions_map(
     url_geojson = 'https://raw.githubusercontent.com/rubens36/covid19/master/maps/regiones.geojson'
     regions_shape = alt.Data(url=url_geojson, format=alt.DataFormat(property='features', type='json'))
     chart_data = data[(data[feature] > 0)][[feature, 'id']]
-    
+    print(chart_data.head())
+
     base_chart = (
       alt.Chart(regions_shape, title='Ubicación de los casos confirmados por región')
       .mark_geoshape(stroke='black', strokeWidth=0.5, color='white')
@@ -235,8 +236,7 @@ def generate_regions_map(
       .properties(selection=single)
     )
 
-    final_chart = ((base_chart + color_chart + circle_chart)
-      .configure_view(strokeWidth=0)
+    final_chart = ((base_chart + color_chart + circle_chart).configure_view(strokeWidth=0)
       .properties(
         width=width,
         height=height

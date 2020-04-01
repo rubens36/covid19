@@ -1,9 +1,10 @@
 __pycache__
 .vscode
 gifs
-maps
 packages
 venv
 
 data/raw
 data/join.csv
+
+test.py
