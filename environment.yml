@@ -1,5 +1,12 @@
 name: covid19_chile
+channels:
+    - conda-forge
 dependencies:
+- python=3.6
+- anaconda
+- geopandas
+- pip
+- pip:
   - numpy
   - pandas
   - geopandas
