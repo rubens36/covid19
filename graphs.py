@@ -1,4 +1,4 @@
-import altair as alt, vega_datasets as vd, pandas as pd, geopandas as gpd, datetime
+import altair as alt, vega_datasets as vd, pandas as pd, datetime
 from utils import get_country_data
 
 def get_title(columna):
