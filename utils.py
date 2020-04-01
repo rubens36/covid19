@@ -8,25 +8,31 @@ def read_national_data(path, sheet_name, encoding='utf-8'):
     res_df = df.join((poblacion_regiones.set_index('region_title')), on='region_title')
     daily_df = get_daily_data(res_df)
     res_df, daily_df = transform_data(res_df), transform_data(daily_df)
+    
     if 'fecha' in res_df.columns:
         res_df['fecha'] = pd.to_datetime((res_df['fecha']), format='%d-%m-%Y')
+    
     if 'fecha' in daily_df.columns:
         daily_df['fecha'] = pd.to_datetime((daily_df['fecha']), format='%d-%m-%Y')
-    return (
-     res_df, daily_df)
+    
+    return res_df, daily_df
 
 
 def get_international_df(url):
     df = pd.read_csv(url)
+    
     for col in ('Province/State', 'Lat', 'Long'):
         df.drop(col, axis=1, inplace=True)
 
-    transforms = {'Cabo Verde':'Cape Verde',
-     'Congo (Brazzaville)':'Congo [Republic]',
-     'Congo (Kinshasa)':'Congo [DRC]',
-     'Korea, South':'South Korea',
-     'Taiwan*':'Taiwan',
-     'US':'United States'}
+    transforms = {
+        'Cabo Verde':'Cape Verde',
+        'Congo (Brazzaville)':'Congo [Republic]',
+        'Congo (Kinshasa)':'Congo [DRC]',
+        'Korea, South':'South Korea',
+        'Taiwan*':'Taiwan',
+        'US':'United States'
+    }
+
     df['Country/Region'].replace(transforms, inplace=True)
     df = df.groupby('Country/Region').sum().reset_index()
     return df
@@ -73,19 +79,27 @@ def get_dates(data, date_re='\\d{4}(-\\d{2}){2}'):
 
 
 def get_poblacion_regiones():
-    res_dict = {'region_title':[
-      'Metropolitana', 'Valparaíso', 'Biobío', 'Maule', 'Araucanía',
-      "O'Higgins", 'Los Lagos', 'Coquimbo', 'Antofagasta', 'Ñuble', 'Los Ríos',
-      'Tarapacá', 'Atacama', 'Arica y Parinacota', 'Magallanes', 'Aysén'],
-     'poblacion':[
-      7112808, 1815902, 1556805, 1044950, 957224, 914555, 828708,
-      757586, 607534, 480609, 384837, 330558, 286168, 226068, 166533, 103158]}
+    res_dict = {
+        'region_title':[
+            'Metropolitana', 'Valparaíso', 'Biobío', 'Maule', 'Araucanía',
+            "O'Higgins", 'Los Lagos', 'Coquimbo', 'Antofagasta', 'Ñuble', 'Los Ríos',
+            'Tarapacá', 'Atacama', 'Arica y Parinacota', 'Magallanes', 'Aysén'
+        ],
+        'poblacion':[
+            7112808, 1815902, 1556805, 1044950, 957224, 914555, 828708,
+            757586, 607534, 480609, 384837, 330558, 286168, 226068, 166533, 103158
+        ]
+    }
+
     return pd.DataFrame.from_dict(res_dict)
 
 
 def transform_data(df: pd.DataFrame):
-    return df.melt(id_vars=['region_title', 'region', 'id', 'poblacion'], var_name='fecha',
-      value_name='infectados')
+    return df.melt(
+        id_vars=['region_title', 'region', 'id', 'poblacion'], 
+        var_name='fecha',
+        value_name='infectados'
+    )
 
 
 def transform_international_data(df):
