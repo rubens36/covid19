@@ -3,7 +3,8 @@ import altair as alt
 import datetime
 
 from utils import (
-    read_national_data,  
+    read_national_data, 
+    read_international_data, 
     show_credentials 
 )
 
@@ -12,6 +13,8 @@ from graphs import (
     get_regional_chart,
     get_regional_proportion_chart,
     generate_regions_map,
+    get_international_chart,
+    generate_countries_map
 )
 
 st.sidebar.info("Herramienta desarrollada para la evaluación del \
@@ -69,8 +72,53 @@ if page_select == "Nacional":
     
     map_national_graph = generate_regions_map(data, date_select, "infectados", "Title")
     st.altair_chart(map_national_graph)
-
 elif page_select == "Internacional":
-    pass#total_data, daily_data = read_national_data(url_casos_chile, "integrado")
+    confirmed, deaths, recovered, confirmed_daily, deaths_daily, recovered_daily = read_international_data()
+    
+    data = {
+        "total": {
+            "confirmed": confirmed,
+            "deaths": deaths,
+            "recovered": recovered,
+        },
+        "daily": {
+            "confirmed": confirmed_daily,
+            "deaths": deaths_daily,
+            "recovered": recovered_daily,
+        }
+    }
+
+    if data_select == "Casos Totales":
+        data = data["total"]
+    else:
+        data = data["daily"]
+
+    data_select = st.selectbox(
+        "Seleccione los tipos de datos que desea visualizar:", 
+        options=["Casos confirmados", "Cantidad de muertes", "Cantidad de recuperados"]
+    )
+
+    if data_select == "Casos confirmados":
+        data = data["confirmed"]
+    elif data_select == "Cantidad de muertes":
+        data = data["deaths"]
+    else:
+        data = data["recovered"]
+
+    default_paises = ["Chile", "Cuba", "Mexico", "Brazil", "Argentina"]
+    paises_select = st.multiselect(
+        "Seleccione los países que desea incluir en el gráfico:", 
+        options=list(data['pais']), 
+        default=default_paises
+    )
+    international_graph = get_international_chart(data, paises_select, scale)
+    st.altair_chart(international_graph)
+
+    date_select = st.date_input("Selecciona el día que deseas inspeccionar:", value=default_date, key="international_date")
+    
+    interactive_select = st.checkbox("Interactivo")
+    countries_graph = generate_countries_map(data, date_select,interactive=interactive_select)
+
+    st.altair_chart(countries_graph)
 
 show_credentials()

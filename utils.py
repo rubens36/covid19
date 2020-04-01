@@ -40,7 +40,7 @@ def get_international_df(url):
 
 @st.cache
 def get_country_data():
-    path = './data/countries.csv'
+    path = 'https://raw.githubusercontent.com/rubens36/covid19/master/data/countries.csv'
     return pd.read_csv(path, delimiter=';', encoding='latin-1')
 
 

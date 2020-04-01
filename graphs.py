@@ -159,7 +159,6 @@ def generate_regions_map(
     url_geojson = 'https://raw.githubusercontent.com/rubens36/covid19/master/maps/regiones.geojson'
     regions_shape = alt.Data(url=url_geojson, format=alt.DataFormat(property='features', type='json'))
     chart_data = data[(data[feature] > 0)][[feature, 'id']]
-    print(chart_data.head())
 
     base_chart = (
       alt.Chart(regions_shape, title='Ubicación de los casos confirmados por región')
@@ -249,7 +248,6 @@ def generate_regions_map(
 def get_international_chart(
   data: pd.DataFrame, 
   paises: list, 
-  tipo: str, 
   scale: alt.Scale, 
   padding: int=5, 
   width: int=800, 
@@ -266,11 +264,11 @@ def get_international_chart(
       .mark_line(point={'size': 70})
       .encode(
         x=alt.X('fecha:T', title='Fecha'),
-        y=alt.Y('casos:Q', title=tipo, scale=scale),
+        y=alt.Y('casos:Q', title='Casos', scale=scale),
         color=alt.Color('pais:N', title='País', legend=None),
         tooltip=[
           alt.Tooltip('pais', title='País'),
-          alt.Tooltip('casos', title=tipo),
+          alt.Tooltip('casos', title='Casos'),
           alt.Tooltip('fecha', title='Fecha', type='temporal')
         ]
       )
@@ -294,8 +292,6 @@ def get_international_chart(
 def generate_countries_map(
   data: pd.DataFrame, 
   date, 
-  feature: str, 
-  title: str, 
   interactive: bool=False, 
   width: int=600, 
   height: int=600, 
