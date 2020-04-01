@@ -1,0 +1,8 @@
+name: covid19_chile
+dependencies:
+  - numpy
+  - pandas
+  - geopandas
+  - altair
+  - vega_datasets
+  - streamlit
