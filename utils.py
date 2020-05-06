@@ -67,7 +67,7 @@ def get_daily_data(df, date_re='\\d{4}(-\\d{2}){2}'):
     for idx, col in enumerate(dates_columns):
         anterior = actual
         actual = df[col].copy()
-        res_df[col] = actual - anterior
+        res_df[col] = abs(actual - anterior)
 
     return res_df
 
